@@ -1,3 +1,4 @@
+from adapters.visualizer import Visualizer
 from models.perceptron import Perceptron
 from models.adaline import Adaline
 from adapters.get_training_set import GetTrainingSet
@@ -22,3 +23,12 @@ class Execute:
                 columns=None, target_func=Utils.windows_vs_non_windows
             )
             trainer.run(X_train, y_train)
+
+    @staticmethod
+    def visualize() -> None:
+        dataset = GetTrainingSet("data/glass.csv")
+        X_raw, y_raw = dataset.load()
+        columns = ["RI", "Na", "Mg", "Al", "Si", "K", "Ca", "Ba", "Fe"]
+
+        viz = Visualizer(X_raw, y_raw, columns)
+        viz.run()

@@ -8,7 +8,7 @@ class GetTrainingSet(GetTrainingSetABC):
         self.filepath = filepath
 
     def load(self) -> tuple[np.ndarray, np.ndarray]:
-        df = pd.read_csv(self.filepath)
+        df = pd.read_csv(self.filepath, header=None)
         X = df.iloc[:, 1:10].values.astype(float)
         y = df.iloc[:, 10].values
         return X, y

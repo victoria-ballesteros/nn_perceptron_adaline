@@ -1,26 +1,26 @@
-import matplotlib # type: ignore
+import matplotlib  # type: ignore
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt # type: ignore
-import seaborn as sns # type: ignore
-import pandas as pd # type: ignore
-import numpy as np # type: ignore
-from sklearn.decomposition import PCA # type: ignore
-from sklearn.preprocessing import StandardScaler # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
+import seaborn as sns  # type: ignore
+import pandas as pd  # type: ignore
+import numpy as np  # type: ignore
+from sklearn.decomposition import PCA  # type: ignore
+from sklearn.preprocessing import StandardScaler  # type: ignore
 import os
 import warnings
 
 warnings.filterwarnings("ignore")
 
 
-class Visualizer:
+class TrainingDataVisualizer:
     def __init__(
         self,
         X: np.ndarray,
         y: np.ndarray,
         columns: list,
         output_dir: str = "data/plots",
-    ):
+    ) -> None:
         self.df = pd.DataFrame(X, columns=columns)
         self.df["Type"] = y
         self.df["Binary"] = np.where(y == 1, "Windows", "No-Windows")
@@ -44,7 +44,7 @@ class Visualizer:
 
     def heatmap(self, filename: str = "heatmap.png") -> None:
         plt.figure(figsize=(10, 8))
-        corr_matrix = self.df.iloc[:, :-2].corr() # type: ignore
+        corr_matrix = self.df.iloc[:, :-2].corr()  # type: ignore
         sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="coolwarm")
         plt.title("Mapa de calor de correlación")
         plt.savefig(os.path.join(self.output_dir, filename))
@@ -177,7 +177,7 @@ class Visualizer:
         plt.savefig(os.path.join(self.output_dir, filename), dpi=300)
         plt.close()
 
-    def print_summary(self):
+    def print_summary(self) -> None:
         print("=== RESUMEN DEL DATASET ===")
         print(f"Total muestras: {len(self.df)}")
         print(f"Características: {len(self.df.columns) - 2}")
@@ -187,7 +187,7 @@ class Visualizer:
         print(self.df["Binary"].value_counts())
 
         print("\n=== CORRELACIONES ALTAS (>0.7) ===")
-        corr_matrix = self.df.iloc[:, :-2].corr() # type: ignore
+        corr_matrix = self.df.iloc[:, :-2].corr()  # type: ignore
         high_corr = corr_matrix[(corr_matrix.abs() > 0.7) & (corr_matrix != 1.0)]
         for col in high_corr.columns:
             high_values = high_corr[col].dropna()
@@ -203,7 +203,7 @@ class Visualizer:
             print(f"  Mg: {group_data['Mg'].mean():.3f} ± {group_data['Mg'].std():.3f}")
 
     def run(self) -> None:
-        self.print_summary()
+        # self.print_summary()
         self.scatter("Mg", "Al", "scatter_Mg_Al.png")
         self.heatmap("heatmap_correlation.png")
         self.pairplot(["Mg", "Al", "Si", "Na"], "pairplot_selected.png")

@@ -1,4 +1,8 @@
 import numpy as np  # type: ignore
+from sklearn.metrics import ( # type: ignore
+    accuracy_score,
+    confusion_matrix,
+)
 
 class Train:
     def __init__(self, model, X_raw: np.ndarray, y_raw: np.ndarray) -> None:
@@ -16,9 +20,35 @@ class Train:
 
         return X, y
 
-    def run(self, X, y) -> float:
+    def run(self, X, y) -> dict:
         self.model.train(X, y)
         y_pred = self.model.predict(X)
-        accuracy = (y_pred == y).mean()
-        print(f"{self.model.__class__.__name__} Accuracy: {accuracy:.4f}")
-        return y_pred
+        cm = confusion_matrix(y, y_pred)
+
+        tp = cm[1, 1] if cm.shape == (2, 2) else 0
+        fp = cm[0, 1] if cm.shape == (2, 2) else 0
+        fn = cm[1, 0] if cm.shape == (2, 2) else 0
+
+        accuracy = accuracy_score(y, y_pred)
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+        f1 = (
+            2 * precision * recall / (precision + recall)
+            if (precision + recall) > 0
+            else 0
+        )
+
+        return {
+            "y_true": y,
+            "y_pred": y_pred,
+            "accuracy": accuracy,
+            "error_rate": 1 - accuracy,
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+            "confusion_matrix": cm,
+            "training_errors": self.model.errors,
+            "weights": self.model.w,
+            "model_name": self.model.__class__.__name__,
+        }
+

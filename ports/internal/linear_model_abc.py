@@ -16,7 +16,11 @@ class LinearModelABC(ABC):
     @abstractmethod
     def activation(self, z) -> float:
         raise NotImplementedError
-
+    
     @abstractmethod
-    def learn(self, x, y, y_hat) -> None:
+    def calculate_error(self, y, y_hat) -> float:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def update_weights(self, x, y, y_hat) -> None:
         raise NotImplementedError
